@@ -29,7 +29,15 @@ typedef struct {
 } Vec;
 
 /**
- *  @brief Initialize a new Vec with no elemts
+ *  @brief Initialize a Vec from an existing pointer.
+ *
+ *  @param vec Pointer to Vec.
+ *  @param elem_size Byte size of each elements to be stored.
+ */
+void vec_init(Vec* vec, size_t elem_size);
+
+/**
+ *  @brief Create  a new Vec with no elemts
  *
  *  @param elem_size Size (in bytes) of the type to be stored.
  *
@@ -38,7 +46,7 @@ typedef struct {
 Vec vec_new(size_t elem_size);
 
 /**
- *  @brief Initalizes Vec with values from an existing array. Values are copied
+ *  @brief Create Vec with values from an existing array. Values are copied
  *
  *  @param arr Values to make initial Vec.
  *  @param length Number of elements in arr.

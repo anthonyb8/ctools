@@ -4,6 +4,16 @@
 #include "cvec/iterator.h"
 
 int main() {
+  Vec vec_old;
+  vec_init(&vec_old, sizeof(int));
+
+  int v = 10;
+  vec_push(&vec_old, &v);
+  printf("Should be ten: %d\n", *(int*)vec_peek(&vec_old));
+
+  vec_init(&vec_old, sizeof(int));
+  printf("Length is zero: %d\n", vec_len(&vec_old));
+
   // New
   Vec vec_n = vec_new(sizeof(int));
 

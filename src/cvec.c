@@ -1,7 +1,15 @@
+#include <stddef.h>
 #include <stdio.h>
 
 #include "cvec/cvec.h"
 #include "memory.h"
+
+void vec_init(Vec* vec, size_t elem_size) {
+  vec->data = NULL;
+  vec->length = 0;
+  vec->capacity = 0;
+  vec->elem_size = elem_size;
+};
 
 Vec vec_new(size_t elem_size) {
   return (Vec){
@@ -10,7 +18,7 @@ Vec vec_new(size_t elem_size) {
       .capacity = 0,
       .elem_size = elem_size,
   };
-}
+};
 
 Vec vec_from(void* arr, int length, size_t elem_size) {
   if (arr == NULL) {
