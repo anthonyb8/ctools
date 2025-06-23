@@ -1,0 +1,38 @@
+directory = "/Users/anthony/projects/cvec"
+
+[project]
+name = "cvec"
+
+[project.language]
+C = "C99"
+
+[tools]
+compiler_path = "clang"
+intellisense_mode = "intellisenseMode "
+
+[tools.package_manager]
+variant = "Vcpkg"
+directory = "/Users/anthony/projects/cvec"
+
+[tools.package_manager.test_framework]
+variant = "CMocka"
+dir = "/Users/anthony/projects/cvec"
+
+[tools.package_manager.language]
+C = "C99"
+
+[tools.build_system]
+name = "cvec"
+variant = "CMake"
+directory = "/Users/anthony/projects/cvec"
+
+[tools.build_system.test_framework]
+variant = "CMocka"
+dir = "/Users/anthony/projects/cvec"
+
+[tools.build_system.language]
+C = "C99"
+
+[tools.test_framework]
+variant = "CMocka"
+dir = "/Users/anthony/projects/cvec"

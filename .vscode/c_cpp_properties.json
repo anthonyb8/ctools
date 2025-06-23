@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "cStandard": "c11",
+      "cppStandard": "c++20",
+      "defines": [],
+      "includePath": [
+        "${workspaceFolder}/lib",
+        "${workspace}/vcpkg_installed/x64-osx/include"
+      ],
+      "macFrameworkPath": [],
+      "name": "cvec"
+    }
+  ],
+  "version": 4
+}

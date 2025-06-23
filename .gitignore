@@ -1,0 +1,22 @@
+# Ignore build output
+/build/
+/bin/
+
+# Ignore CMake files
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+
+# Ignore vcpkg installation files
+/vcpkg_installed/
+/vcpkg/
+
+# Ignore system files
+*.DS_Store
+*.swp
+.cache
+
+# Vcpkg Commands
+compile_commands.json
+vcpkg-configuration.json
+vcpkg.json
