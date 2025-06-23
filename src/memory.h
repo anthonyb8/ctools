@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+// Adjusts memory of a array based on new_size, freeing if the new size is 0.
 void* reallocate(void* ptr, size_t new_size) {
   if (new_size == 0) {
     free(ptr);

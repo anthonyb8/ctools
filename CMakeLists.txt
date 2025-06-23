@@ -6,7 +6,11 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Library
-add_library(cvec src/cvec.c)
+add_library(cvec 
+  src/cvec.c
+  src/iterator.c
+)
+
 target_include_directories(cvec PUBLIC include/)
 
 # Examples 
@@ -34,6 +38,6 @@ target_include_directories(cvecTests PRIVATE
 add_test(NAME cvecTests COMMAND cvecTests)
 
 # Compiled output file
-set_target_properties(cvec PROPERTIES
+set_target_properties(cvecExamples PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

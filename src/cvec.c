@@ -3,25 +3,6 @@
 #include "cvec/cvec.h"
 #include "memory.h"
 
-VecIterator init_vec_iter(Vec* vec) {
-  return (VecIterator){
-      .vec = vec,
-      .index = 0,
-      .current = (char*)vec->data,
-  };
-}
-
-int next(VecIterator* iter, void* item) {
-  if (iter->index >= iter->vec->length) {
-    return 0;
-  }
-
-  memcpy(item, iter->current, iter->vec->elem_size);
-  iter->index++;
-  iter->current += iter->vec->elem_size;
-  return 1;
-}
-
 Vec vec_new(size_t elem_size) {
   return (Vec){
       .data = NULL,
@@ -41,7 +22,7 @@ Vec vec_from(void* arr, int length, size_t elem_size) {
     exit(1);
   }
 
-  memcpy(data, arr, length * elem_size);
+  copy_mem(data, arr, length * elem_size);
   return (Vec){.data = data,
                .length = length,
                .capacity = length,
@@ -56,9 +37,9 @@ void vec_push(Vec* vec, void* item) {
   }
 
   // Cast to char* for offset math only
-  char* base = (char*)vec->data;
-  memcpy(base + vec->length * vec->elem_size, item, vec->elem_size);
+  void* dest = (char*)vec->data + vec->length * vec->elem_size;
 
+  copy_mem(dest, item, vec->elem_size);
   vec->length++;
 }
 
@@ -66,8 +47,8 @@ void* vec_get(Vec* vec, int index) {
   if (index > vec->length || index < 0) {
     return NULL;
   }
-  char* base = (char*)vec->data;
-  return base + (vec->elem_size * index);
+
+  return (char*)vec->data + (vec->elem_size * index);
 }
 
 int vec_pop(Vec* vec, void* item) {
@@ -77,16 +58,19 @@ int vec_pop(Vec* vec, void* item) {
 
   vec->length--;
 
-  char* base = (char*)vec->data;
-  memcpy(item, base + vec->length * vec->elem_size, vec->elem_size);
+  // Cast to char* for offset math only
+  void* src = (char*)vec->data + vec->length * vec->elem_size;
+  copy_mem(item, src, vec->elem_size);
 
   return 0;
 }
 
 void* vec_peek(Vec* vec) {
-  if (vec->length == 0) return NULL;
-  char* base = (char*)vec->data;
-  return base + (vec->length - 1) * vec->elem_size;
+  if (vec->length == 0) {
+    return NULL;
+  };
+
+  return (char*)vec->data + (vec->length - 1) * vec->elem_size;
 }
 
 int vec_len(Vec* vec) { return vec->length; }
