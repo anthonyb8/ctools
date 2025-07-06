@@ -11,7 +11,8 @@ add_library(ctools
   src/list.c
   src/map.c 
   src/queue.c 
-  src/stack.c  
+  src/stack.c 
+  src/comparators.c  
 )
 
 target_include_directories(ctools PUBLIC include/)

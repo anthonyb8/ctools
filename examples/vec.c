@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "ctools/map.h"
 #include "ctools/vec.h"
 
 int main() {
@@ -8,13 +9,22 @@ int main() {
 
   int v = 10;
   vecPush(&vec_old, &v);
-  // printf("Should be ten: %d\n", *(int*)vecPeek(&vec_old));
+  printf("Should be ten: %d\n", *(int*)vecGet(&vec_old, 0));
 
-  initVec(&vec_old, sizeof(int));
-  printf("Length is zero: %d\n", vecLength(&vec_old));
+  freeVec(&vec_old);
 
   // New
-  Vec* vec_n = newVec(sizeof(int));
+  Vec vec_n = newVec(sizeof(int));
+
+  // Iter
+  VecIterator iter = newVecIter(&vec_n);
+
+  for (void* v = vecNext(&iter); v != NULL; v = vecNext(&iter)) {
+    printf("Shouldnt be seeing this\n");
+  }
+
+  freeVecIter(&iter);
+  freeVec(&vec_n);
 
   // From
   int array[] = {1, 2, 3, 4, 5};
@@ -39,11 +49,13 @@ int main() {
   printf("Length should be five: %d\n", vecLength(&vec));
 
   // Iter
-  VecIterator iter = initVecIter(&vec);
-  int value;
-  while (vecNext(&iter, &value)) {
-    printf("Iteration: %d\n", value);
+  initVecIter(&vec, &iter);
+
+  for (void* value = vecNext(&iter); value != NULL; value = vecNext(&iter)) {
+    printf("Iteration: %d\n", *(int*)value);
   }
+  freeVecIter(&iter);
+  freeVec(&vec);
 
   return 0;
 }

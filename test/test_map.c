@@ -19,131 +19,48 @@ void fillMap(Map* map, int count) {
     int* value = malloc(sizeof(int));
     *value = i;
 
-    mapPut(map, key, strlen(key), value, sizeof(int));
+    mapPut(map, key, value);
   }
 }
 
 // Tests
-static void test_entry_free(void** state) {
+// Cant test by jumping beacues value  aren  back to back persa inth  aray
+static void test_map_mem(void** state) {
   (void)state;
 
-  char* key = "key";
-  int value = 10000;
+  Map map = newMap(2, sizeof(int), CMP_STR);
+  fillMap(&map, 7);
 
-  // Entry
-  Entry entry;
-  initEntry(&entry, key, strlen(key), &value, sizeof(int));
+  MapIterator iter = newMapIter(&map);
+  char* last = NULL;
+  int last_value = 0;
 
-  // Store for free check
-  char* entryKey = entry.key;
-  int* entryValue = entry.value;
+  for (void* v = mapNext(&iter); v != NULL; v = mapNext(&iter)) {
+    if (last != NULL) {
+      // printf("%p\n", v);
+    }
+    last = (char*)v;
+    last_value = *(int*)(v + 2);
+  }
 
-  // Values the same
-  assert_int_equal(value, *entryValue);
-  assert_string_equal(key, entryKey);
+  freeMapIter(&iter);
 
-  // Pointer different
-  assert_ptr_not_equal(&value, entryValue);
-  assert_ptr_not_equal(&key, entryKey);
-
-  // Should free internal memory
-  freeEntry(&entry);
-
-  // Values cleared
-  assert_int_not_equal(value, *entryValue);
-  assert_string_not_equal(key, entryKey);
-}
-
-static void test_entry_reassign(void** state) {
-  (void)state;
-
-  char* key = "key";
-  int value = 10000;
-
-  // Entry
-  Entry entry;
-  initEntry(&entry, key, strlen(key), &value, sizeof(int));
-
-  // Store for reassigned check
-  char* entryKey = entry.key;
-  int* entryValue = entry.value;
-
-  // Check values as expected
-  assert_int_equal(value, *(int*)entry.value);
-  assert_string_equal(key, entry.key);
-  assert_ptr_not_equal(&value, entry.value);
-  assert_ptr_not_equal(&key, entry.key);
-
-  // Reassign Entry values
-  char* key2 = "ke2y";
-  int value2 = 10001;
-  reassignEntry(&entry, key2, strlen(key2), &value2, sizeof(int));
-
-  // Old values free
-  assert_string_not_equal(key, entryKey);
-  assert_int_not_equal(value, *entryValue);
-
-  // New values
-  assert_int_equal(value2, *(int*)entry.value);
-  assert_string_equal(key2, entry.key);
-  assert_ptr_not_equal(&value2, entry.value);
-  assert_ptr_not_equal(&key2, entry.key);
-
-  // Clean up
-  freeEntry(&entry);
-}
-
-static void test_entry_reassign_same_key(void** state) {
-  (void)state;
-
-  char* key = "key";
-  int value = 10000;
-
-  // Entry
-  Entry entry;
-  initEntry(&entry, key, strlen(key), &value, sizeof(int));
-
-  // Store for reassigned check
-  char* entryKey = entry.key;
-  int* entryValue = entry.value;
-
-  // Check values as expected
-  assert_int_equal(value, *(int*)entry.value);
-  assert_string_equal(key, entry.key);
-  assert_ptr_not_equal(&value, entry.value);
-  assert_ptr_not_equal(&key, entry.key);
-
-  // Reassign Entry values
-  int value2 = 10001;
-  reassignEntry(&entry, key, strlen(key), &value2, sizeof(int));
-
-  // Old values free
-  assert_int_not_equal(value, *entryValue);
-
-  // New values
-  assert_int_equal(value2, *(int*)entry.value);
-  assert_string_equal(key, entry.key);
-
-  assert_ptr_not_equal(&value2, entry.value);
-  assert_ptr_not_equal(&key, entry.key);
-  assert_ptr_equal(entry.key, entryKey);
-
-  // Clean up
-  freeEntry(&entry);
+  // Test
+  freeMap(&map);
 }
 
 static void test_map_get(void** state) {
   (void)state;
 
-  Map map;
-  initMap(&map);
+  // Map map;
+  Map map = newMap(10, sizeof(int), CMP_STR);
 
   // Set
   char* key = "apple";
-  int value = 1;
+  int value = 4000;
 
   // Test
-  bool newKey = mapPut(&map, key, strlen(key) + 1, &value, sizeof(int));
+  bool newKey = mapPut(&map, key, &value);
 
   // Get
   void* entry = mapGet(&map, key);
@@ -161,13 +78,12 @@ static void test_map_get(void** state) {
 static void test_map_clear(void** state) {
   (void)state;
 
-  Map map;
-  initMap(&map);
+  Map map = newMap(10, sizeof(int), CMP_STR);
 
   // Set
   char* key = "apple";
   int value = 1;
-  bool newKey = mapPut(&map, key, strlen(key) + 1, &value, sizeof(int));
+  bool newKey = mapPut(&map, key, &value);
 
   // Get
   void* entry1 = mapGet(&map, key);
@@ -188,13 +104,12 @@ static void test_map_clear(void** state) {
 static void test_map_free(void** state) {
   (void)state;
 
-  Map map;
-  initMap(&map);
+  Map map = newMap(10, sizeof(int), CMP_STR);
 
   // Set
   char* key = "apple";
   int value = 1;
-  bool newKey = mapPut(&map, key, strlen(key) + 1, &value, sizeof(int));
+  bool newKey = mapPut(&map, key, &value);
 
   // Get
   void* entry1 = mapGet(&map, key);
@@ -213,13 +128,12 @@ static void test_map_free(void** state) {
 static void test_map_remove(void** state) {
   (void)state;
 
-  Map map;
-  initMap(&map);
+  Map map = newMap(10, sizeof(int), CMP_STR);
 
   // Set
   char* key = "apple";
   int value = 1;
-  bool newKey = mapPut(&map, key, strlen(key) + 1, &value, sizeof(int));
+  bool newKey = mapPut(&map, key, &value);
 
   // Get
   void* entry = mapGet(&map, key);
@@ -240,13 +154,12 @@ static void test_map_remove(void** state) {
 static void test_map_remove_add_back(void** state) {
   (void)state;
 
-  Map map;
-  initMap(&map);
+  Map map = newMap(10, sizeof(int), CMP_STR);
 
   // Set
   char* key = "apple";
   int value = 1;
-  bool newKey = mapPut(&map, key, strlen(key) + 1, &value, sizeof(int));
+  bool newKey = mapPut(&map, key, &value);
   assert_int_equal(map.count, 1);
 
   // Delete
@@ -255,7 +168,7 @@ static void test_map_remove_add_back(void** state) {
 
   // Test
   int value2 = 1000;
-  bool new = mapPut(&map, key, strlen(key) + 1, &value2, sizeof(int));
+  bool new = mapPut(&map, key, &value2);
 
   // Validate
   void* entry = mapGet(&map, key);
@@ -271,8 +184,7 @@ static void test_map_remove_add_back(void** state) {
 static void test_map_size(void** state) {
   (void)state;
 
-  Map map;
-  initMap(&map);
+  Map map = newMap(12, sizeof(int), CMP_STR);
 
   // seed
   int length = 8;
@@ -288,8 +200,7 @@ static void test_map_size(void** state) {
 static void test_map_contains(void** state) {
   (void)state;
 
-  Map map;
-  initMap(&map);
+  Map map = newMap(12, sizeof(int), CMP_STR);
 
   // seed
   int length = 8;
@@ -311,15 +222,13 @@ static void test_map_contains(void** state) {
 }
 
 const struct CMUnitTest mapTests[] = {
-    cmocka_unit_test(test_entry_free),
-    cmocka_unit_test(test_entry_reassign),
-    cmocka_unit_test(test_entry_reassign_same_key),
     cmocka_unit_test(test_map_get),
     cmocka_unit_test(test_map_clear),
     cmocka_unit_test(test_map_free),
     cmocka_unit_test(test_map_remove),
     cmocka_unit_test(test_map_remove_add_back),
     cmocka_unit_test(test_map_size),
-    cmocka_unit_test(test_map_contains)};
+    cmocka_unit_test(test_map_contains),
+    cmocka_unit_test(test_map_mem)};
 
 const size_t mapTestsSize = sizeof(mapTests) / sizeof(mapTests[0]);

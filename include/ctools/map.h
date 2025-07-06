@@ -4,49 +4,23 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/wait.h>
 
+#include "ctools/comparators.h"
+
 #define MAX_LOAD 0.75
-static char tombstone_marker;
-#define TOMBSTONE ((void*)&tombstone_marker)
-
-/**
- *  @brief Stores key as string and value as void* for generic behavior.
- */
-typedef struct {
-  char* key;
-  void* value;
-} Entry;
-
-/**
- *  @brief Initialize entry.
- *
- *  @param key
- *  @param sizeKey
- *  @param value
- *  @param sizeVvalue
- *
- *  @return
- */
-void initEntry(Entry* entry, char* key, size_t sizeKey, void* value,
-               size_t sizeVvalue);
-
-void reassignEntry(Entry* entry, char* key, size_t sizeKey, void* value,
-                   size_t sizeValue);
-/**
- *  @brief Free entry.
- *
- *  @param entry
- */
-void freeEntry(Entry* entry);
 
 /**
  *  @brief Dynamic Array the holds the values.
  */
 typedef struct {
+  void* entries;
+  size_t key_size;
+  size_t value_size;
   int count;
   int capacity;
-  Entry* entries;
+  bool (*cmp)(const void*, const void*);
 } Map;
 
 // Allocate
@@ -55,7 +29,16 @@ typedef struct {
  *
  *  @param map
  */
-void initMap(Map* map);
+void initMap(Map* map, size_t key_size, size_t value_size,
+             bool (*cmp)(const void*, const void*));
+
+/**
+ *  @brief Creates new map and returns object.
+ *
+ *  @return
+ */
+Map newMap(size_t key_size, size_t value_size,
+           bool (*cmp)(const void*, const void*));
 
 /**
  *  @brief Free Map.
@@ -72,7 +55,7 @@ void freeMap(Map* map);
  *  @param key
  *  @param value
  */
-bool mapPut(Map* map, char* key, size_t sizeKey, void* value, size_t sizeValue);
+bool mapPut(Map* map, void* key, void* value);
 
 /**
  *  @brief Remove pair from map.
@@ -80,7 +63,7 @@ bool mapPut(Map* map, char* key, size_t sizeKey, void* value, size_t sizeValue);
  *  @param map
  *  @param key
  */
-void mapRemove(Map* map, char* key);
+void mapRemove(Map* map, void* key);
 
 /**
  *  @brief Clean entire map(use with caution).
@@ -98,7 +81,7 @@ void mapClear(Map* map);
  *
  *  @return
  */
-void* mapGet(Map* map, char* key);
+void* mapGet(Map* map, void* key);
 
 /**
  *  @brief Check if key is present in map.
@@ -108,7 +91,7 @@ void* mapGet(Map* map, char* key);
  *
  *  @return
  */
-bool mapContains(Map* map, char* key);
+bool mapContains(Map* map, void* key);
 
 /**
  *  @brief Number of entries in map currently.
@@ -119,26 +102,15 @@ bool mapContains(Map* map, char* key);
  */
 int mapSize(Map* map);
 
-// /**
-//  *  @brief Return array or keys.
-//  *
-//  *  @param map
-//  */
-// void mapKeys(Map* map);
-//
-// /**
-//  *  @brief Return array of values.
-//  *
-//  *  @param map
-//  */
-// void mapValues(Map* map);
-
 /**
  *  @brief Pointer that tracks location, returns next live item.
  */
 typedef struct {
-  int capacity;
-  Entry* next;
+  void* next;
+  int remaining;
+  Map* map;
+  // size_t key_size;
+  // size_t value_size;
 } MapIterator;
 
 /**
@@ -148,6 +120,15 @@ typedef struct {
  *  @param iter
  */
 void initMapIter(Map* map, MapIterator* iter);
+
+/**
+ *  @brief Create new MapIterator.
+ *
+ *  @param map
+ *
+ *  @return
+ */
+MapIterator newMapIter(Map* map);
 
 /**
  *  @brief Free mapiterator.
@@ -164,6 +145,6 @@ void freeMapIter(MapIterator* iter);
  *
  *  @return
  */
-bool mapNext(MapIterator* iter, Entry* value);
+void* mapNext(MapIterator* iter);
 
 #endif

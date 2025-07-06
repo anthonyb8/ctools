@@ -33,7 +33,7 @@ void initVec(Vec* vec, size_t elem_size);
  *
  *  @return Pointer to Vec instance
  */
-Vec* newVec(size_t elem_size);
+Vec newVec(size_t elem_size);
 
 /**
  *  @brief Create Vec with values from an existing array. Values are copied
@@ -116,7 +116,25 @@ typedef struct {
  *
  *  @return VecIterator instance.
  */
-VecIterator initVecIter(Vec* vec);
+void initVecIter(Vec* vec, VecIterator* iter);
+
+/**
+ *  @brief Initialize VecIterator instance.
+ *
+ *  @param vec Pointer to Vec instance.
+ *
+ *  @return VecIterator instance.
+ */
+VecIterator newVecIter(Vec* vec);
+
+/**
+ *  @brief Initialize VecIterator instance.
+ *
+ *  @param vec Pointer to Vec instance.
+ *
+ *  @return VecIterator instance.
+ */
+void freeVecIter(VecIterator* iter);
 
 /**
  *  @brief Assign next element in Vec to passed pointer.
@@ -126,6 +144,7 @@ VecIterator initVecIter(Vec* vec);
  *
  *  @return 0 on completion, non-zero otherwise.
  */
-int vecNext(VecIterator* iter, void* item);
+
+void* vecNext(VecIterator* iter);
 
 #endif

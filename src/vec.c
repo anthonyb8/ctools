@@ -6,7 +6,13 @@
 #include "memory.h"
 
 // iterator
-VecIterator initVecIter(Vec* vec) {
+void initVecIter(Vec* vec, VecIterator* iter) {
+  iter->vec = vec;
+  iter->index = 0;
+  iter->current = (char*)vec->data;
+};
+
+VecIterator newVecIter(Vec* vec) {
   return (VecIterator){
       .vec = vec,
       .index = 0,
@@ -14,15 +20,21 @@ VecIterator initVecIter(Vec* vec) {
   };
 }
 
-int vecNext(VecIterator* iter, void* item) {
+void freeVecIter(VecIterator* iter) {
+  iter->vec = NULL;
+  iter->index = 0;
+  iter->current = NULL;
+}
+
+void* vecNext(VecIterator* iter) {
   if (iter->index >= iter->vec->length) {
-    return 0;
+    return NULL;
   }
 
-  memcpy(item, iter->current, iter->vec->elem_size);
+  void* current = iter->current;
   iter->index++;
   iter->current += iter->vec->elem_size;
-  return 1;
+  return current;
 }
 
 // Allocate
@@ -35,13 +47,14 @@ static inline void nullVec(Vec* vec, size_t elem_size) {
 
 void initVec(Vec* vec, size_t elem_size) { nullVec(vec, elem_size); };
 
-Vec* newVec(size_t elem_size) {
-  Vec* vec = malloc(sizeof(Vec));
-  if (!vec) return NULL;
-  nullVec(vec, elem_size);
-
-  return vec;
-};
+Vec newVec(size_t elem_size) {
+  return (Vec){
+      .data = NULL,
+      .length = 0,
+      .capacity = 0,
+      .elem_size = elem_size,
+  };
+}
 
 Vec fromArray(void* arr, int length, size_t elem_size) {
   if (arr == NULL) {
@@ -64,6 +77,11 @@ Vec fromArray(void* arr, int length, size_t elem_size) {
                .capacity = length,
                .elem_size = elem_size};
 };
+
+void freeVec(Vec* vec) {
+  free(vec->data);
+  nullVec(vec, vec->elem_size);
+}
 
 // Updating
 static inline void resize(Vec* vec) {
@@ -122,5 +140,3 @@ int vecSet(Vec* vec, int index, void* value) {
 }
 
 int vecLength(Vec* vec) { return vec->length; }
-
-void freeVec(Vec* vec) { free(vec->data); }
