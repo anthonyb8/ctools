@@ -3,7 +3,9 @@
 #include "ctools/map.h"
 #include "ctools/vec.h"
 
-int main() {
+void intVecExample() {
+  printf("\nInteger Example\n");
+
   Vec vec_old;
   initVec(&vec_old, sizeof(int));
 
@@ -56,6 +58,91 @@ int main() {
   }
   freeVecIter(&iter);
   freeVec(&vec);
+}
+
+void strPtrVecExample() {
+  printf("\nPointer Example\n");
+
+  // New
+  Vec vec = newVec(sizeof(char*));
+
+  // Push
+  const char* fruits[] = {"apple",       "banana", "coconut",
+                          "dragonfruit", "berry",  "fig"};
+  for (int i = 0; i < 6; i++) {
+    vecPush(&vec, &fruits[i]);
+  }
+
+  // Length
+  int length = vecLength(&vec);
+  printf("Length is six: %d\n", length);
+
+  // Get
+  char** gotten = vecGet(&vec, 3);
+  printf("Gotten value 'dragonfruit' : %s\n", *gotten);
+
+  // Pop
+  char* popped;
+  int status = vecPop(&vec, &popped);
+  printf("Popped value should be 'fig': %s\n", popped);
+  printf("Length should be five: %d\n", vecLength(&vec));
+
+  // Iter
+  VecIterator iter = newVecIter(&vec);
+  initVecIter(&vec, &iter);
+
+  for (void* value = vecNext(&iter); value != NULL; value = vecNext(&iter)) {
+    printf("Iteration: %s\n", *(char**)value);
+    ;
+  }
+
+  freeVecIter(&iter);
+  freeVec(&vec);
+}
+
+void strVecExample() {
+  printf("\nString Example\n");
+  // New
+  Vec vec = newVec(sizeof(char[12]));
+
+  // Push
+  char* fruits[] = {"apple",       "banana", "coconut",
+                    "dragonfruit", "berry",  "fig"};
+  for (int i = 0; i < 6; i++) {
+    vecPush(&vec, fruits[i]);
+  }
+
+  // Length
+  int length = vecLength(&vec);
+  printf("Length is six: %d\n", length);
+
+  // Get
+  char* gotten = vecGet(&vec, 4);
+  printf("Gotten value 'berry' : %s\n", gotten);
+
+  // Pop
+  char popped[12];
+  int status = vecPop(&vec, popped);
+  printf("Popped value should be 'fig': %s\n", popped);
+  printf("Length should be five: %d\n", vecLength(&vec));
+
+  // Iter
+  VecIterator iter = newVecIter(&vec);
+  initVecIter(&vec, &iter);
+
+  for (char* value = vecNext(&iter); value != NULL; value = vecNext(&iter)) {
+    printf("Iteration: %s\n", value);
+    ;
+  }
+
+  freeVecIter(&iter);
+  freeVec(&vec);
+}
+
+int main() {
+  intVecExample();
+  strPtrVecExample();
+  strVecExample();
 
   return 0;
 }

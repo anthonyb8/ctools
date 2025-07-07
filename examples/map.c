@@ -28,7 +28,8 @@ void fillMapIntStr(Map* map, int count) {
   }
 }
 
-int main() {
+/* String key map */
+int stringExample() {
   Map map = newMap(2, sizeof(int), CMP_STR);
 
   // seed
@@ -66,7 +67,7 @@ int main() {
   // Remove
   mapRemove(&map, "e");
   int* eNull = mapGet(&map, "e");
-  printf("Value: %s\n", (char*)e);  // Should be undefined
+  printf("Undefined Value: %s\n", (char*)e);  // Should be undefined
 
   // Contains
   bool check = mapContains(&map, "a");
@@ -88,13 +89,13 @@ int main() {
   printf("Length: %d\n", mapSize(&map));  // Should be 0
 
   // Iterate
-  int count;
+  int count = 0;
+  initMapIter(&map, &iter);
 
-  for (Entry* entry = mapNext(&iter); entry != NULL;
-       entry = mapNext(&iter), count++) {
-    printf("Key: %s Value : %d\n", (char*)entry,
-           *(int*)(entry + 2));  /// Shouldnt print
+  for (void* entry = mapNext(&iter); entry != NULL; entry = mapNext(&iter)) {
+    count++;
   }
+
   printf("Count : %d\n", count);  // Should be 0
 
   freeMapIter(&iter);
@@ -102,10 +103,18 @@ int main() {
   // Cleanup
   freeMap(&map);
 
+  return 0;
+}
+
+/* Integer key map */
+int intExample() {
+  Map map;
+
   // Differnt  type
   initMap(&map, sizeof(int), 2, CMP_INT);
 
   // seed
+  int length = 8;
   fillMapIntStr(&map, length);
 
   // Get
@@ -144,6 +153,13 @@ int main() {
 
   // Cleanup
   freeMap(&map);
+
+  return 0;
+}
+
+int main() {
+  intExample();
+  stringExample();
 
   return 0;
 }

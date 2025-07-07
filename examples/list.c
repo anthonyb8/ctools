@@ -1,79 +1,59 @@
 #include <stdio.h>
-#include <stdlib.h>
 
+#include "ctools/comparators.h"
 #include "ctools/list.h"
 
-CMP_FUNCTION(int)
-PRINT_FUNCTION(int, "%d")
-
-int main() {
-  // Node node;
-  // Node* node = initNode("testing",);
-  // freeNode(node);
-
-  // List
-  List listStack;
-  initList(&listStack, int_cmp, int_print);
-
-  List* listHeap = newList(int_cmp, int_print);
+void listIntExample() {
+  List* list = newList(CMP_INT, PRINT_INT);
 
   // Append
-  for (int i = 0; i < 10; i++) {
-    int* value = malloc(sizeof(int));
-    *value = i;
-    listAppend(listHeap, value, sizeof(int));
-  }
-
-  // Prepend
-  for (int i = 10; i < 20; i++) {
-    int* value = malloc(sizeof(int));
-    *value = i;
-    listPrepend(listHeap, value, sizeof(int));
-  }
+  listPrepend(list, &(int){100}, sizeof(int));
+  int index100 = listIndexOf(list, &(int){100});
+  printf("Index zero: %d\n", index100);
 
   // Insert
-  int g = 99;
-  listInsert(listHeap, 9, &g, sizeof(int));
+  listInsert(list, 1, &(int){200}, sizeof(int));
+  int index200 = listIndexOf(list, &(int){200});
+  printf("Index one: %d\n", index200);
 
-  // Get
-  int* d = (int*)listHead(listHeap)->value;
-  printf("Head : %d\n", *d);
+  // Prepend
+  listAppend(list, &(int){300}, sizeof(int));
+  int index300 = listIndexOf(list, &(int){300});
+  printf("Index two: %d\n", index300);
 
-  int* e = (int*)listTail(listHeap)->value;
-  printf("Tail : %d\n", *e);
+  // Set
+  listSet(list, 1, &(int){500}, sizeof(int));
+  int index500 = listIndexOf(list, &(int){500});
+  printf("Index one: %d\n", index500);
 
-  int p = 8;
-  Node* found_node = listFind(listHeap, &p);
-  printf("Value : %d | Next Value: %d\n", *(int*)found_node->value,
-         *(int*)found_node->next->value);
+  // Find
+  Node* node = listFind(list, &(int){200});
+  printf("Should be null: %s\n", (char*)node);
 
-  // Update
-  int y = 1000;
-  listSet(listHeap, 0, &y);
+  Node* node1 = listFind(list, &(int){500});
+  printf("Should be 500: %d\n", *(int*)node1->value);
+
+  Node* head = listHead(list);
+  printf("Should be 100: %d\n", *(int*)head->value);
+
+  Node* tail = listTail(list);
+  printf("Should be 300: %d\n", *(int*)tail->value);
+
+  // Size
+  printf("Size three : %d\n", listSize(list));
 
   // Delete
-  deleteHead(listHeap);
-  deleteTail(listHeap);
+  deleteHead(list);
+  deleteTail(list);
+  deleteValue(list, &(int){500});
+  printList(list);
 
-  // deleteValue(listHeap, node->next->value);
+  // Size
+  printf("Size zero : %d\n", listSize(list));
+  printf("Empty true: %d\n", listIsEmpty(list));
+}
 
-  // Other
-  printList(listHeap);
-
-  bool empty = listIsEmpty(listHeap);
-  printf("isEmpty %b\n", empty);
-
-  int z = 99;
-  int index = listIndexOf(listHeap, &z);
-  printf("indexOf %d\n", index);
-
-  int size = listSize(listHeap);
-  printf("size %d\n", size);
-
-  clearList(listHeap);
-
-  int size2 = listSize(listHeap);
-  printf("size %d\n", size2);
-
+int main() {
+  listIntExample();
   return 0;
 }

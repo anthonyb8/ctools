@@ -9,175 +9,233 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ctools/comparators.h"
 #include "ctools/list.h"
 
-// Int
-#define CMP_INT CMP_FUNCTION(int)
-#define PRINT_INT PRINT_FUNCTION(int, "%d")
-
-// String
-#define CMP_STR CMP_FUNCTION(char*)
-#define PRINT_STR PRINT_FUNCTION(char*, "%s")
-
-// Structs
-typedef struct {
-  int a;
-  char b;
-  double c;
-} Dummy;
-
-bool compareDummy(Dummy* a, Dummy* b) {
-  if (a->a != b->a) {
-    return false;
-  }
-
-  if (a->b != b->b) {
-    return false;
-  }
-
-  if (a->c != b->c) {
-    return false;
-  }
-
-  return true;
-}
-
-bool cmpDummy(const void* a, const void* b) {
-  return compareDummy((Dummy*)a, (Dummy*)b);
-}
-void printDummy(const void* value) {
-  Dummy* d = (Dummy*)value;
-  printf("{a:%d, b:%c, c:%f", d->a, d->b, d->c);
-};
-
 // Tests
-static void test_list_int(void** state) {
+static void test_list_append(void** state) {
   (void)state;
 
-  Node* node;
-  // initNode(&node);
+  List* list = newList(CMP_INT, PRINT_INT);
+
+  // Test
+  listAppend(list, &(int){100}, sizeof(int));
+
+  // Validate
+  Node* head = listHead(list);
+  Node* tail = listTail(list);
+  assert_int_equal(*(int*)head->value, *(int*)tail->value);
+  assert_int_equal(*(int*)head->value, 100);
+  assert_int_equal(listSize(list), 1);
 }
 
-static void test_list_int2(void** state) {
+static void test_list_prepend(void** state) {
   (void)state;
 
-  // List list;
-  // initList(&list, cmpInt, printInt);
-  //
-  // // Inserts
-  // for (int i = 0; i < 10; i++) {
-  //   int* value = malloc(sizeof(int));
-  //   *value = i;
-  //   insertHead(&list, value);
-  // }
-  //
-  // for (int i = 10; i < 20; i++) {
-  //   int* value = malloc(sizeof(int));
-  //   *value = i;
-  //   insertTail(&list, value);
-  // }
-  //
-  // int g = 99;
-  // insertAt(&list, 9, &g);
-  //
-  // // Get
-  // int* d = (int*)getHead(&list)->value;
-  // printf("Head : %d\n", *d);
-  //
-  // int* e = (int*)getTail(&list)->value;
-  // printf("Tail : %d\n", *e);
-  //
-  // int p = 8;
-  // Node* node = find(&list, &p);
-  // printf("Value : %d | Next Value: %d\n", *(int*)node->value,
-  //        *(int*)node->next->value);
-  //
-  // // Delete
-  // deleteHead(&list);
-  // deleteTail(&list);
-  // deleteValue(&list, node->next->value);
+  List* list = newList(CMP_INT, PRINT_INT);
+
+  // Test
+  listPrepend(list, &(int){100}, sizeof(int));
+
+  // Validate
+  Node* head = listHead(list);
+  Node* tail = listTail(list);
+  assert_int_equal(*(int*)head->value, *(int*)tail->value);
+  assert_int_equal(*(int*)head->value, 100);
+  assert_int_equal(listSize(list), 1);
 }
 
-static void test_list_string(void** state) {
+static void test_list_insert(void** state) {
   (void)state;
 
-  // List list;
-  // initList(&list, cmpInt, printInt);
-  //
-  // // Inserts
-  // for (int i = 0; i < 10; i++) {
-  //   int* value = malloc(sizeof(int));
-  //   *value = i;
-  //   insertHead(&list, value);
-  // }
-  //
-  // for (int i = 10; i < 20; i++) {
-  //   int* value = malloc(sizeof(int));
-  //   *value = i;
-  //   insertTail(&list, value);
-  // }
-  //
-  // int g = 99;
-  // insertAt(&list, 9, &g);
-  //
-  // // Get
-  // int* d = (int*)getHead(&list)->value;
-  // printf("Head : %d\n", *d);
-  //
-  // int* e = (int*)getTail(&list)->value;
-  // printf("Tail : %d\n", *e);
-  //
-  // int p = 8;
-  // Node* node = find(&list, &p);
-  // printf("Value : %d | Next Value: %d\n", *(int*)node->value,
-  //        *(int*)node->next->value);
-  //
-  // // Delete
-  // deleteHead(&list);
-  // deleteTail(&list);
-  // deleteValue(&list, node->next->value);
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+
+  // Test
+  listInsert(list, 1, &(int){101}, sizeof(int));
+  Node* node = listHead(list);
+
+  // Validate
+  // shoudl be second from head
+  assert_int_equal(*(int*)node->next->value, 101);
+  assert_int_equal(listSize(list), 3);
 }
 
-static void test_list_struct(void** state) {
+static void test_list_at(void** state) {
   (void)state;
 
-  // List list;
-  // initList(&list, cmpInt, printInt);
-  //
-  // // Inserts
-  // for (int i = 0; i < 10; i++) {
-  //   int* value = malloc(sizeof(int));
-  //   *value = i;
-  //   insertHead(&list, value);
-  // }
-  //
-  // for (int i = 10; i < 20; i++) {
-  //   int* value = malloc(sizeof(int));
-  //   *value = i;
-  //   insertTail(&list, value);
-  // }
-  //
-  // int g = 99;
-  // insertAt(&list, 9, &g);
-  //
-  // // Get
-  // int* d = (int*)getHead(&list)->value;
-  // printf("Head : %d\n", *d);
-  //
-  // int* e = (int*)getTail(&list)->value;
-  // printf("Tail : %d\n", *e);
-  //
-  // int p = 8;
-  // Node* node = find(&list, &p);
-  // printf("Value : %d | Next Value: %d\n", *(int*)node->value,
-  //        *(int*)node->next->value);
-  //
-  // // Delete
-  // deleteHead(&list);
-  // deleteTail(&list);
-  // deleteValue(&list, node->next->value);
+  List* list = newList(CMP_INT, PRINT_INT);
+  listPrepend(list, &(int){200}, sizeof(int));
+  listPrepend(list, &(int){100}, sizeof(int));
+  listPrepend(list, &(int){100}, sizeof(int));
+
+  // Test
+  Node* node = listFind(list, &(int){200});
+
+  // Validate
+  assert_ptr_equal(node->next, NULL);  // tail
 }
 
-const struct CMUnitTest listTests[] = {cmocka_unit_test(test_list_int)};
+static void test_list_at_multiple(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+
+  // Test
+  Node* node = listFind(list, &(int){100});
+
+  // Validate
+  Node* head = listHead(list);
+  assert_int_equal(node->next, head->next);
+  assert_int_equal(*(int*)node->value, 100);
+}
+
+static void test_delete_head(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){200}, sizeof(int));
+
+  // Test
+  assert_int_equal(listSize(list), 2);
+  deleteHead(list);
+
+  // Validate
+  Node* head = listHead(list);
+  assert_ptr_equal(head->next, NULL);
+  assert_int_equal(*(int*)head->value, 200);
+  assert_int_equal(listSize(list), 1);
+}
+
+static void test_delete_tail(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){500}, sizeof(int));
+
+  // Test
+  assert_int_equal(listSize(list), 2);
+  deleteTail(list);
+
+  // Validate
+  Node* tail = listTail(list);
+  assert_int_equal(tail->next, NULL);
+  assert_int_equal(*(int*)tail->value, 100);
+  assert_int_equal(listSize(list), 1);
+}
+
+static void test_delete_value(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){500}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+
+  // Test
+  deleteValue(list, &(int){500});
+
+  // Validate
+  Node* head = listHead(list);
+  Node* tail = listTail(list);
+  assert_ptr_equal(head->next, tail);
+}
+
+static void test_list_not_empty(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+
+  // Test
+  assert_false(listIsEmpty(list));
+}
+
+static void test_list_is_empty(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+
+  // Test
+  assert_true(listIsEmpty(list));
+}
+
+static void test_list_size(void** state) {
+  (void)state;
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+
+  // Test
+  assert_int_equal(2, listSize(list));
+}
+
+static void test_list_clear(void** state) {
+  (void)state;
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+  assert_int_equal(2, listSize(list));
+
+  // Test
+  clearList(list);
+
+  // Validate
+  assert_int_equal(0, listSize(list));
+}
+
+static void test_list_set(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){100}, sizeof(int));
+  assert_int_equal(3, listSize(list));
+
+  // Test
+  listSet(list, 1, &(int){500}, sizeof(int));
+
+  // Validate
+  Node* head = listHead(list);
+  assert_int_equal(*(int*)head->next->value, 500);
+  assert_int_equal(3, listSize(list));
+}
+
+static void test_list_index_of(void** state) {
+  (void)state;
+
+  List* list = newList(CMP_INT, PRINT_INT);
+  listAppend(list, &(int){100}, sizeof(int));
+  listAppend(list, &(int){200}, sizeof(int));
+  listAppend(list, &(int){300}, sizeof(int));
+  assert_int_equal(3, listSize(list));
+
+  // Test
+  assert_int_equal(listIndexOf(list, &(int){100}), 0);
+  assert_int_equal(listIndexOf(list, &(int){200}), 1);
+  assert_int_equal(listIndexOf(list, &(int){300}), 2);
+}
+
+const struct CMUnitTest listTests[] = {cmocka_unit_test(test_list_append),
+                                       cmocka_unit_test(test_list_prepend),
+                                       cmocka_unit_test(test_list_insert),
+                                       cmocka_unit_test(test_list_at),
+                                       cmocka_unit_test(test_list_at_multiple),
+                                       cmocka_unit_test(test_list_set),
+                                       cmocka_unit_test(test_delete_head),
+                                       cmocka_unit_test(test_delete_tail),
+                                       cmocka_unit_test(test_delete_value),
+                                       cmocka_unit_test(test_list_is_empty),
+                                       cmocka_unit_test(test_list_not_empty),
+                                       cmocka_unit_test(test_list_index_of),
+                                       cmocka_unit_test(test_list_clear),
+                                       cmocka_unit_test(test_list_size)};
 
 const size_t listTestsSize = sizeof(listTests) / sizeof(listTests[0]);

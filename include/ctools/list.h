@@ -6,20 +6,10 @@
 
 typedef struct Node Node;
 
-#define CMP_FUNCTION(TYPE)                        \
-  bool TYPE##_cmp(const void* a, const void* b) { \
-    return *(const TYPE*)a == *(const TYPE*)b;    \
-  }
-
-#define PRINT_FUNCTION(TYPE, FORMATTER)     \
-  void TYPE##_print(const void* value) {    \
-    printf(FORMATTER, *(const TYPE*)value); \
-  }
-
 // Nodes
 struct Node {
-  void* value;
   Node* next;
+  void* value;
 };
 
 /**
@@ -146,7 +136,7 @@ Node* listFind(List* list, void* value);
  *  @param list
  *  @param value
  */
-void listSet(List* list, int index, void* value);
+void listSet(List* list, int index, void* value, size_t elem_size);
 
 // Delete
 /**
