@@ -1,0 +1,15 @@
+Detecting compiler hash for triplet x64-osx...
+Compiler found: /usr/local/opt/llvm/bin/clang++
+All requested packages are currently installed.
+Total install time: 22.5 us
+cmocka provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(cmocka CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE cmocka::cmocka)
+
+cmocka provides pkg-config modules:
+
+  # The cmocka unit testing library
+  cmocka
+

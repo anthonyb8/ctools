@@ -1,39 +1,40 @@
-# Cvec
+# Ctools
 
-**Cvec** is a simple, generic dynamic array implementation in C.
+**Ctools** is a collection of generic data structures implemented in C.
 
-Designed primarily as an **educational tool**, Cvec is written in idiomatic C, has no external dependencies and uses `void*` internally to allow storage of any data type.
+Designed as an **educational resource**, Ctools offers idiomatic C implementations of common data structures. It uses `void*` to provide type-agnostic storage and sticks to the core C89/C99 standard, making it portable and easy to understand.
+
+## 🧰 Data Structures Included
+
+- **Vec** – A dynamic array
+- **Map** – A simple hash map
+- **Linked List** – A singly linked list implementation
+
+All structures support **manual memory management**, putting you in full control of allocations and lifetimes.
 
 ## 🔧 Features
 
-- Type-agnostic storage (via `void*`)
-- Dynamically resizes when needed
-- Manual memory management (you control lifetimes)
-- C89/C99-compatible
+- Type-agnostic (`void*`-based) interfaces
+- No external dependencies
+- Dynamically resizing containers
+- Simple, portable C89/C99-compatible code
+- Minimal API surface for learning and extension
 
-## 📦 Example
+## 📂 Examples
 
-```c
-#include "cvec/cvec.h"
-#include <stdio.h>
+Each data structure includes working demo files:
 
-int main() {
-    Vec vec = vec_new(sizeof(int));
+- [Vec](examples/vec.c)
+- [Map](exmaples/map.c)
+- [List](exmaples/list.c)
 
-    int x = 42;
-    vec_push(&vec, &x);
+```bash
+cmake .
 
-    int out;
-    if (vec_pop(&vec, &out) == 0) {
-        printf("Popped: %d\n", out);
-    }
-
-    vec_free(&vec);
-    return 0;
-}
+./build/vecExample
+./build/mapExample
+./examples/listExample
 ```
-
-\*See more use cases [here](examples/demo.c)
 
 ## :computer: Usage
 

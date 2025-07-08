@@ -33,8 +33,12 @@ void intVecExample() {
   Vec vec = fromArray(&array, sizeof(array) / sizeof(int), sizeof(int));
 
   // Push
-  int x = 6;
+  int x = 5;
   vecPush(&vec, &x);
+
+  // Set
+  int y = 6;
+  vecSet(&vec, 5, &y);
 
   // Length
   int length = vecLength(&vec);
